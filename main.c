@@ -5,7 +5,7 @@
 #define NUMBER_OF_STATES 22
 #define NUMBER_OF_SIGNAL 14
 #define LEX_ERROR "lex error"
-#define EOF "end of file"
+#define END_OF_FILE "end of file"
 
 char buffer[BUFFER_SIZE];
 int buffer_offset = 0;
@@ -14,7 +14,7 @@ char lex_val[BUFFER_SIZE];
 int lex_length;
 
 typedef enum {
-    S0,
+    S0 = 0,
     S1,
     S2,
     S3,
@@ -40,7 +40,7 @@ typedef enum {
 } state;
 
 typedef enum {
-    IDENTIFICATOR,
+    IDENTIFICATOR = 23,
     NUMBER_LEXEM,
     MATH_SIGN,
     LOGIC_SIGN,
@@ -49,7 +49,7 @@ typedef enum {
 } lexem;
 
 typedef enum {
-    DOT,
+    DOT = 0,
     COMMA,
     SPACE,
     OTHER,
@@ -65,7 +65,7 @@ typedef enum {
     F_LETTER
 } input_signal;
 
-int transitions[NUMBER_OF_STATES][NUMBER_OF_SIGNAL] = {
+int transitions[NUMBER_OF_SIGNAL][NUMBER_OF_STATES] = {
     //      0|       1|       2|       3|       4|       5|       6|       7|       8|       9|      10|      11|      12|      13|      14|      15|      16|      17|      18|      19|      20|      21|      
     { S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR,     S14, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR},//DOT
     { S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR,     S14, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR},//COMMA
@@ -74,13 +74,13 @@ int transitions[NUMBER_OF_STATES][NUMBER_OF_SIGNAL] = {
     { S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR},//ENDF
     {     S11,     S11,     S11, S_ERROR,     S11,     S11,     S11,     S11,     S11,     S11, S_ERROR,     S11, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR},//LETTER
     {     S13, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR,     S11, S_ERROR,     S13,     S15,     S15, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR},//NUMBER_SIGNAL
-    {      S4, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR},//S_LETTER
-    { S_ERROR, S_ERROR, S_ERROR, S_ERROR,      S5, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR},//W_LETTER
-    {      S1, S_ERROR, S_ERROR, S_ERROR, S_ERROR,      S6, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR},//I_LETTER
-    { S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR,      S7, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR},//T_LETTER
-    { S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR,      S8, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR},//C_LETTER
-    { S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR,      S9, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR},//H_LETTER
-    { S_ERROR,      S2, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR},//F_LETTER
+    {      S4, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR,     S11, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR},//S_LETTER
+    {     S11, S_ERROR, S_ERROR, S_ERROR,      S5, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR,     S11, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR},//W_LETTER
+    {      S1, S_ERROR, S_ERROR, S_ERROR, S_ERROR,      S6, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR,     S11, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR},//I_LETTER
+    {     S11, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR,      S7, S_ERROR, S_ERROR, S_ERROR, S_ERROR,     S11, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR},//T_LETTER
+    {     S11, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR,      S8, S_ERROR, S_ERROR, S_ERROR,     S11, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR},//C_LETTER
+    {     S11, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR,      S9, S_ERROR, S_ERROR,     S11, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR},//H_LETTER
+    {     S11,      S2, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR,     S11, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR, S_ERROR},//F_LETTER
 };
 
 void appendToLex(char symbol) {
@@ -105,37 +105,6 @@ void reset_lex(){
 
 short isStateFinal(int state) {
     return state == S3 || state == S10 || state == S12 || state == S16 || state == S18 || state == S21;
-}
-
-char* state_machine() {
-    reset_lex();
-    
-    state cur_state = S0;
-    input_signal cur_input = recognize();
-
-    while (cur_input != ENDF) {
-        cur_state = transitions[cur_input][cur_state];
-        
-        if (cur_state == IDENTIFICATOR) 
-            return "IDENTIFICATOR";
-        if (cur_state == NUMBER_LEXEM) 
-            return "NUMBER_LEXEM";
-        if (cur_state == MATH_SIGN) 
-            return "MATH_SIGN";
-        if (cur_state == LOGIC_SIGN) 
-            return "LOGIC_SIGN";
-        if (cur_state == IF) 
-            return "IF";
-        if (cur_state == SWITCH) 
-            return "SWITCH";
-        
-        if (cur_state == S_ERROR)
-            return LEX_ERROR;
-
-        cur_input = recognize();
-    }
-
-    return EOF;
 }
 
 int recognize(){
@@ -173,7 +142,36 @@ int recognize(){
     }
 }
 
+char* state_machine() {
+    reset_lex();
+    
+    state cur_state = S0;
+    input_signal cur_input = recognize();
 
+    while (cur_input != ENDF) {
+        cur_state = transitions[cur_input][cur_state];
+        
+        if (cur_state == IDENTIFICATOR) 
+            return "IDENTIFICATOR";
+        if (cur_state == NUMBER_LEXEM) 
+            return "NUMBER_LEXEM";
+        if (cur_state == MATH_SIGN) 
+            return "MATH_SIGN";
+        if (cur_state == LOGIC_SIGN) 
+            return "LOGIC_SIGN";
+        if (cur_state == IF) 
+            return "IF";
+        if (cur_state == SWITCH) 
+            return "SWITCH";
+        
+        if (cur_state == S_ERROR)
+            return LEX_ERROR;
+
+        cur_input = recognize();
+    }
+
+    return END_OF_FILE;
+}
 
 int main() {
     printf("Hello world\n");
@@ -182,7 +180,7 @@ int main() {
     
     char* status = malloc(sizeof(char) * BUFFER_SIZE);
     
-    while (strcmp(status, LEX_ERROR) != 0 && strcmp(status, EOF) != 0)
+    while (strcmp(status, LEX_ERROR) != 0 && strcmp(status, END_OF_FILE) != 0)
     {
         strcpy(status, state_machine());
         printf("%s: %s\n", lex_val, status);
